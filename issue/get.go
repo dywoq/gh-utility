@@ -28,23 +28,27 @@ func GetById(ctx context.Context, conf *base.Config, id int) (*github.Issue, err
 func GoGetById(ctx context.Context, conf *base.Config, ids []int) ([]*github.Issue, error) {
 	var (
 		issues []*github.Issue
-		goterr    error
+		goterr error
 		wg     sync.WaitGroup
+		m      sync.Mutex
 	)
 
 	for _, id := range ids {
-		if goterr != nil {
-			break
-		}
 		wg.Go(func() {
 			i, err := GetById(ctx, conf, id)
+			m.Lock()
+			defer m.Unlock() 
 			if err != nil {
-				goterr = err
+				if goterr == nil {
+					goterr = err
+				}
 				return
-			} 
+			}
 			issues = append(issues, i)
 		})
 	}
+
+	wg.Wait()
 
 	return issues, goterr
 }
