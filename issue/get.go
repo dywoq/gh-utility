@@ -24,7 +24,7 @@ func GetById(ctx context.Context, conf *base.Config, id int) (*github.Issue, err
 }
 
 // GoGetById gets all issues with their IDs synchronously.
-// Causes a early-exit if the error is met, and the function returns it.
+// Causes an early-exit if the error is met, and the function returns it.
 func GoGetById(ctx context.Context, conf *base.Config, ids []int) ([]*github.Issue, error) {
 	var (
 		issues []*github.Issue
